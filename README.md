@@ -1,4 +1,12 @@
-# MutfakMessageHub
+<p align="center">
+  <img src="https://mutfakyazlimevi.com/.../logo.png" width="180" />
+</p>
+
+![License](https://img.shields.io/badge/license-MIT-blue)
+
+![NuGet](https://img.shields.io/badge/NuGet-coming_soon-yellow)
+
+![Build](https://img.shields.io/badge/build-passing-brightgreen) 
 
 **MutfakMessageHub**, .NET uygulamaları için modern, hafif ve
 genişletilebilir bir in-process messaging kütüphanesidir. MediatR'ın
