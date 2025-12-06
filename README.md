@@ -8,6 +8,20 @@
 
 ![Build](https://img.shields.io/badge/build-passing-brightgreen) 
 
+### 🔥 Highlights
+- MediatR-compatible API
+- Request/Response messaging
+- Notification broadcasting
+- Parallel & Sequential dispatch
+- Pipeline behaviors (Exception, Validation, Retry, Cache)
+- Outbox pattern
+- Telemetry (OpenTelemetry)
+- Dead-letter queue
+- Timeout support
+- Source generator (handler discovery)
+- High-performance open-generic caching
+
+
 **MutfakMessageHub**, .NET uygulamaları için modern, hafif ve
 genişletilebilir bir in-process messaging kütüphanesidir. MediatR'ın
 kullanım kolaylığını korurken; pipeline, performans, telemetri ve mesaj
