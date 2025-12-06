@@ -1,0 +1,6 @@
+Notification
+   ├─ Handler A
+   ├─ Handler B
+   └─ Handler C
+Sequential: A → B → C
+Parallel:   A & B & C
