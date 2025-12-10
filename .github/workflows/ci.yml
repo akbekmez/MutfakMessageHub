@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        dotnet-version: ['10.0.x', '8.0.x', '7.0.x', '6.0.x']
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal
+
+  pack:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Pack
+      run: dotnet pack --no-restore --configuration Release --output ./artifacts
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages
+        path: ./artifacts/*.nupkg
+
+  publish-nuget:
+    runs-on: ubuntu-latest
+    needs: pack
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[publish]')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: nuget-packages
+        path: ./artifacts
+    
+    - name: Publish to NuGet
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+

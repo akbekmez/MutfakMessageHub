@@ -1,0 +1,34 @@
+<Project>
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0;net7.0;net6.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors />
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <Authors>Mutfak Yazılım Evi</Authors>
+    <Company>Mutfak Yazılım Evi</Company>
+    <Product>MutfakMessageHub</Product>
+    <Copyright>Copyright © Mutfak Yazılım Evi 2024</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/mutfakyazlimevi/MutfakMessageHub</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mutfakyazlimevi/MutfakMessageHub</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>mediatr;messaging;cqrs;request;response;notification;pipeline;behavior;outbox;telemetry</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
+
