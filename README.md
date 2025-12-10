@@ -9,10 +9,10 @@
 
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/mutfakyazlimevi/MutfakMessageHub/actions)
 
-[![GitHub Stars](https://img.shields.io/github/stars/mutfakyazlimevi/MutfakMessageHub?style=social)](https://github.com/mutfakyazlimevi/MutfakMessageHub)
-[![GitHub Forks](https://img.shields.io/github/forks/mutfakyazlimevi/MutfakMessageHub?style=social)](https://github.com/mutfakyazlimevi/MutfakMessageHub)
-[![GitHub Issues](https://img.shields.io/github/issues/mutfakyazlimevi/MutfakMessageHub)](https://github.com/mutfakyazlimevi/MutfakMessageHub/issues)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/mutfakyazlimevi/MutfakMessageHub)](https://github.com/mutfakyazlimevi/MutfakMessageHub) 
+[![GitHub Stars](https://img.shields.io/github/stars/akbekmez/MutfakMessageHub?style=social)](https://github.com/akbekmez/MutfakMessageHub)
+[![GitHub Forks](https://img.shields.io/github/forks/akbekmez/MutfakMessageHub?style=social)](https://github.com/akbekmez/MutfakMessageHub)
+[![GitHub Issues](https://img.shields.io/github/issues/akbekmez/MutfakMessageHub)](https://github.com/akbekmez/MutfakMessageHub/issues)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/akbekmez/MutfakMessageHub)](https://github.com/akbekmez/MutfakMessageHub) 
 
 ### 🔥 Highlights
 - MediatR-compatible API
