@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-![NuGet](https://img.shields.io/nuget/v/MutfakMessageHub)
+[![NuGet](https://img.shields.io/nuget/v/MutfakMessageHub)](https://www.nuget.org/packages/MutfakMessageHub/)
 
 ![Build](https://img.shields.io/badge/build-passing-brightgreen) 
 
@@ -73,6 +73,8 @@ Hem request hem notification için pipeline behavior desteği:
 -   Custom behavior desteği
 
 ## Kurulum
+
+**NuGet Package**: [MutfakMessageHub on NuGet.org](https://www.nuget.org/packages/MutfakMessageHub/)
 
 ``` bash
 dotnet add package MutfakMessageHub
