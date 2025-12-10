@@ -4,7 +4,12 @@
     <PackageId>MutfakMessageHub</PackageId>
     <Version>1.0.0</Version>
     <Description>Modern, lightweight and extensible in-process messaging library for .NET applications. MediatR-compatible API with enhanced pipeline behaviors, telemetry, outbox pattern, and high-performance handler discovery.</Description>
+    <PackageIcon Condition="Exists('icon.png')">icon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup Condition="Exists('icon.png')">
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />

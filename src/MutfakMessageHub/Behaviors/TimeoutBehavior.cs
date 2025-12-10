@@ -39,7 +39,23 @@ public class TimeoutBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
 
         try
         {
-            return await next();
+            var task = next();
+            var timeoutTask = Task.Delay(_timeout, linkedCts.Token);
+
+            var completedTask = await Task.WhenAny(task, timeoutTask);
+
+            if (completedTask == timeoutTask && timeoutCts.Token.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+            {
+                _logger?.LogWarning(
+                    "Request of type {RequestType} timed out after {Timeout}ms",
+                    typeof(TRequest).Name,
+                    _timeout.TotalMilliseconds);
+
+                throw new TimeoutException(
+                    $"Request of type {typeof(TRequest).Name} timed out after {_timeout.TotalMilliseconds}ms");
+            }
+
+            return await task;
         }
         catch (OperationCanceledException ex) when (timeoutCts.Token.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
         {
