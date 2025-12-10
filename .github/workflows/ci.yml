@@ -25,13 +25,16 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
     
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore src/MutfakMessageHub/MutfakMessageHub.csproj tests/MutfakMessageHub.Tests/MutfakMessageHub.Tests.csproj --verbosity minimal
     
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build src/MutfakMessageHub/MutfakMessageHub.csproj --no-restore --configuration Release
+    
+    - name: Build Tests
+      run: dotnet build tests/MutfakMessageHub.Tests/MutfakMessageHub.Tests.csproj --no-restore --configuration Release
     
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal
+      run: dotnet test tests/MutfakMessageHub.Tests/MutfakMessageHub.Tests.csproj --no-build --configuration Release --verbosity normal
 
   pack:
     runs-on: ubuntu-latest
@@ -47,10 +50,10 @@ jobs:
         dotnet-version: '10.0.x'
     
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore src/MutfakMessageHub/MutfakMessageHub.csproj --verbosity minimal
     
     - name: Pack
-      run: dotnet pack --no-restore --configuration Release --output ./artifacts
+      run: dotnet pack src/MutfakMessageHub/MutfakMessageHub.csproj --no-restore --configuration Release --output ./artifacts
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
