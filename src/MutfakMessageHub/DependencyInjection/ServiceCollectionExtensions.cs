@@ -5,6 +5,7 @@ using MutfakMessageHub.Abstractions;
 using MutfakMessageHub.Behaviors;
 using MutfakMessageHub.Configuration;
 using MutfakMessageHub.Core;
+using MutfakMessageHub.DeadLetterQueue;
 using MutfakMessageHub.Outbox;
 using MutfakMessageHub.Pipeline;
 
@@ -77,6 +78,14 @@ public static class ServiceCollectionExtensions
             
             // Register outbox processor as background service
             services.AddHostedService<OutboxProcessor>();
+        }
+
+        // Register dead-letter queue if enabled
+        if (options.DeadLetterQueueEnabled)
+        {
+            // Register DLQ (default: InMemoryDeadLetterQueue)
+            // Users can override this by registering their own IDeadLetterQueue
+            services.TryAddSingleton<IDeadLetterQueue, InMemoryDeadLetterQueue>();
         }
 
         // Always register exception handling and validation behaviors

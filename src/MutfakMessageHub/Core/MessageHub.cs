@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MutfakMessageHub.Abstractions;
 using MutfakMessageHub.Configuration;
+using MutfakMessageHub.DeadLetterQueue;
 using MutfakMessageHub.Outbox;
 using MutfakMessageHub.Pipeline;
 
@@ -92,14 +93,14 @@ public class MessageHub : IMessageHub
 
         if (_options.PublishParallelByDefault)
         {
-            var tasks = handlers.Select(handler => InvokeNotificationHandler(handler!, notification, cancellationToken));
+            var tasks = handlers.Select(handler => InvokeNotificationHandlerWithDlq(handler!, notification, cancellationToken));
             await Task.WhenAll(tasks);
         }
         else
         {
             foreach (var handler in handlers)
             {
-                await InvokeNotificationHandler(handler!, notification, cancellationToken);
+                await InvokeNotificationHandlerWithDlq(handler!, notification, cancellationToken);
             }
         }
     }
@@ -132,7 +133,7 @@ public class MessageHub : IMessageHub
         var handlerType = typeof(INotificationHandler<>).MakeGenericType(notificationType);
         var handlers = _serviceProvider.GetServices(handlerType).Where(h => h != null);
 
-        var tasks = handlers.Select(handler => InvokeNotificationHandler(handler!, notification, cancellationToken));
+        var tasks = handlers.Select(handler => InvokeNotificationHandlerWithDlq(handler!, notification, cancellationToken));
         await Task.WhenAll(tasks);
     }
 
@@ -219,5 +220,51 @@ public class MessageHub : IMessageHub
         }
 
         return task;
+    }
+
+    private async Task InvokeNotificationHandlerWithDlq(
+        object handler,
+        INotification notification,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await InvokeNotificationHandler(handler, notification, cancellationToken);
+        }
+        catch (Exception ex) when (_options.DeadLetterQueueEnabled)
+        {
+            var dlq = _serviceProvider.GetService<IDeadLetterQueue>();
+            if (dlq != null)
+            {
+                try
+                {
+                    await dlq.AddAsync(notification, handler.GetType(), ex, cancellationToken);
+                    _logger?.LogWarning(
+                        ex,
+                        "Notification handler {HandlerType} failed for notification {NotificationType}. Added to dead-letter queue.",
+                        handler.GetType().Name,
+                        notification.GetType().Name);
+                }
+                catch (Exception dlqEx)
+                {
+                    _logger?.LogError(
+                        dlqEx,
+                        "Failed to add message to dead-letter queue. Original error: {OriginalError}",
+                        ex.Message);
+                    // Re-throw original exception if DLQ fails
+                    throw;
+                }
+            }
+            else
+            {
+                // DLQ is enabled but not registered, log and re-throw
+                _logger?.LogError(
+                    ex,
+                    "Notification handler {HandlerType} failed for notification {NotificationType}, but DLQ is not available.",
+                    handler.GetType().Name,
+                    notification.GetType().Name);
+                throw;
+            }
+        }
     }
 }
