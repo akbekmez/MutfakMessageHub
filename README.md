@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-![NuGet](https://img.shields.io/badge/NuGet-coming_soon-yellow)
+![NuGet](https://img.shields.io/nuget/v/MutfakMessageHub)
 
 ![Build](https://img.shields.io/badge/build-passing-brightgreen) 
 
@@ -196,6 +196,10 @@ Başarısız notification handler sonuçları DLQ'ya yazılır.
 
 Open-generic caching, source generator, lazy resolution, minimal
 reflection kullanır.
+
+## Yayınlama
+
+NuGet.org'a yayınlama adımları için [Publishing Guide](docs/publishing.md) dokümantasyonuna bakın.
 
 ## Lisans
 
