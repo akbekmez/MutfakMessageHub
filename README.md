@@ -2,11 +2,17 @@
   <img src="https://mutfakyazlimevi.com/.../logo.png" width="180" />
 </p>
 
-![License](https://img.shields.io/badge/license-MIT-blue)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/mutfakyazlimevi/MutfakMessageHub/blob/main/LICENSE)
 
 [![NuGet](https://img.shields.io/nuget/v/MutfakMessageHub)](https://www.nuget.org/packages/MutfakMessageHub/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/MutfakMessageHub)](https://www.nuget.org/packages/MutfakMessageHub/)
 
-![Build](https://img.shields.io/badge/build-passing-brightgreen) 
+[![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/mutfakyazlimevi/MutfakMessageHub/actions)
+
+[![GitHub Stars](https://img.shields.io/github/stars/mutfakyazlimevi/MutfakMessageHub?style=social)](https://github.com/mutfakyazlimevi/MutfakMessageHub)
+[![GitHub Forks](https://img.shields.io/github/forks/mutfakyazlimevi/MutfakMessageHub?style=social)](https://github.com/mutfakyazlimevi/MutfakMessageHub)
+[![GitHub Issues](https://img.shields.io/github/issues/mutfakyazlimevi/MutfakMessageHub)](https://github.com/mutfakyazlimevi/MutfakMessageHub/issues)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/mutfakyazlimevi/MutfakMessageHub)](https://github.com/mutfakyazlimevi/MutfakMessageHub) 
 
 ### 🔥 Highlights
 - MediatR-compatible API
