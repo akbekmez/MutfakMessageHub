@@ -1,9 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using MutfakMessageHub.Abstractions;
 using MutfakMessageHub.Behaviors;
 using MutfakMessageHub.Configuration;
 using MutfakMessageHub.Core;
+using MutfakMessageHub.Outbox;
 using MutfakMessageHub.Pipeline;
 
 namespace MutfakMessageHub.DependencyInjection;
@@ -63,6 +65,18 @@ public static class ServiceCollectionExtensions
         if (options.TelemetryEnabled)
         {
             services.TryAddTransient(typeof(IPipelineBehavior<,>), typeof(TelemetryBehavior<,>));
+        }
+
+        // Register outbox components if enabled
+        if (options.OutboxEnabled)
+        {
+            // Register outbox store (default: InMemoryOutboxStore)
+            // Users can override this by registering their own IOutboxStore
+            services.TryAddSingleton<IOutboxStore, InMemoryOutboxStore>();
+            services.TryAddScoped<IOutboxWriter, OutboxWriter>();
+            
+            // Register outbox processor as background service
+            services.AddHostedService<OutboxProcessor>();
         }
 
         // Always register exception handling and validation behaviors

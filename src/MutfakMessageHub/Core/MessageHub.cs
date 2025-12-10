@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MutfakMessageHub.Abstractions;
 using MutfakMessageHub.Configuration;
+using MutfakMessageHub.Outbox;
 using MutfakMessageHub.Pipeline;
 
 namespace MutfakMessageHub.Core;
@@ -69,6 +70,20 @@ public class MessageHub : IMessageHub
             throw new ArgumentNullException(nameof(notification));
         }
 
+        // If outbox is enabled, save to outbox instead of publishing directly
+        if (_options.OutboxEnabled)
+        {
+            var outboxWriter = _serviceProvider.GetService<IOutboxWriter>();
+            if (outboxWriter != null)
+            {
+                await outboxWriter.SaveAsync(notification, cancellationToken);
+                _logger?.LogDebug(
+                    "Saved notification of type {NotificationType} to outbox",
+                    notification.GetType().Name);
+                return;
+            }
+        }
+
         var notificationType = notification.GetType();
         _logger?.LogDebug("Publishing notification of type {NotificationType}", notificationType.Name);
 
@@ -95,6 +110,20 @@ public class MessageHub : IMessageHub
         if (notification == null)
         {
             throw new ArgumentNullException(nameof(notification));
+        }
+
+        // If outbox is enabled, save to outbox instead of publishing directly
+        if (_options.OutboxEnabled)
+        {
+            var outboxWriter = _serviceProvider.GetService<IOutboxWriter>();
+            if (outboxWriter != null)
+            {
+                await outboxWriter.SaveAsync(notification, cancellationToken);
+                _logger?.LogDebug(
+                    "Saved notification of type {NotificationType} to outbox",
+                    notification.GetType().Name);
+                return;
+            }
         }
 
         var notificationType = notification.GetType();
