@@ -22,4 +22,7 @@ public class GetUserHandler
 
 ## Sending the Request
 
+``` csharp
+var messageHub = serviceProvider.GetRequiredService<IMessageHub>();
 var result = await messageHub.Send(new GetUserQuery { Id = 5 });
+```

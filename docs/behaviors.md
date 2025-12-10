@@ -11,15 +11,20 @@ yönlendiren bir pipeline mimarisi kullanır.
 - CacheBehavior
 - TimeoutBehavior
 - TelemetryBehavior
-- OutboxBehavior
+
+**Not**: Outbox pattern, MessageHub.Publish() metodu içinde direkt olarak implement edilmiştir. Ayrı bir behavior olarak değil, outbox enabled olduğunda otomatik olarak devreye girer.
 
 Her behavior şu imzayı takip eder:
 
-public interface IPipelineBehavior<TRequest, TResponse>
+using MutfakMessageHub.Pipeline;
+using MutfakMessageHub.Abstractions;
+
+public interface IPipelineBehavior<in TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
     Task<TResponse> Handle(
         TRequest request,
-        CancellationToken token,
+        CancellationToken cancellationToken,
         RequestHandlerDelegate<TResponse> next);
 }
 

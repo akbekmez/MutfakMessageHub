@@ -18,7 +18,7 @@
 - Telemetry (OpenTelemetry)
 - Dead-letter queue
 - Timeout support
-- Source generator (handler discovery)
+- Source generator (handler discovery - planned)
 - High-performance open-generic caching
 
 
@@ -35,7 +35,7 @@ Kütüphane tam olarak aşağıdaki bileşenleri destekler:
 -   Exception, Validation, Retry ve Caching behavior'ları
 -   Outbox Pattern ile güvenilir mesaj teslimi
 -   OpenTelemetry entegrasyonu
--   Source Generator tabanlı handler discovery
+-   Source Generator tabanlı handler discovery (planned)
 -   Timeout ve Dead-Letter mekanizması
 
 ## Özellikler
@@ -68,8 +68,8 @@ Hem request hem notification için pipeline behavior desteği:
 -   ValidationBehavior
 -   RetryBehavior
 -   CachingBehavior
--   UnitOfWorkBehavior (opsiyonel)
 -   TimeoutBehavior
+-   TelemetryBehavior
 -   Custom behavior desteği
 
 ## Kurulum
@@ -91,9 +91,32 @@ services.AddMutfakMessageHub(options =>
 
 ## Kullanım
 
+### Dependency Injection
+
+``` csharp
+// Program.cs veya Startup.cs
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMutfakMessageHub(options =>
+{
+    options.EnableCaching();
+    options.EnableRetry();
+    options.EnableOutbox();
+    options.EnableTelemetry();
+    options.EnableDeadLetterQueue();
+});
+
+var app = builder.Build();
+
+// IMessageHub'ı inject edin
+var messageHub = app.Services.GetRequiredService<IMessageHub>();
+```
+
 ### Request / Handler
 
 ``` csharp
+using MutfakMessageHub.Abstractions;
+
 public class GetUserQuery : IRequest<UserDto>
 {
     public int Id { get; set; }
@@ -106,11 +129,17 @@ public class GetUserHandler : IRequestHandler<GetUserQuery, UserDto>
         return Task.FromResult(new UserDto { Id = request.Id });
     }
 }
+
+// Request gönderme
+var messageHub = serviceProvider.GetRequiredService<IMessageHub>();
+var user = await messageHub.Send(new GetUserQuery { Id = 5 });
 ```
 
 ### Notification / Handler
 
 ``` csharp
+using MutfakMessageHub.Abstractions;
+
 public class UserCreatedNotification : INotification
 {
     public int UserId { get; set; }
@@ -128,13 +157,14 @@ public class SendWelcomeMailHandler : INotificationHandler<UserCreatedNotificati
 ### Publish
 
 ``` csharp
-await mediator.Publish(new UserCreatedNotification { UserId = 15 });
+var messageHub = serviceProvider.GetRequiredService<IMessageHub>();
+await messageHub.Publish(new UserCreatedNotification { UserId = 15 });
 ```
 
 Parallel publish:
 
 ``` csharp
-await mediator.PublishParallel(new UserCreatedNotification { UserId = 15 });
+await messageHub.PublishParallel(new UserCreatedNotification { UserId = 15 });
 ```
 
 ## Pipeline Behavior
@@ -142,12 +172,15 @@ await mediator.PublishParallel(new UserCreatedNotification { UserId = 15 });
 ### Exception Handling
 
 ``` csharp
+using MutfakMessageHub.Pipeline;
+
 public class ExceptionHandlingBehavior<TRequest, TResponse>
-    : IMessagePipelineBehavior<TRequest, TResponse>
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
     public async Task<TResponse> Handle(
         TRequest request,
-        CancellationToken token,
+        CancellationToken cancellationToken,
         RequestHandlerDelegate<TResponse> next)
     {
         try
@@ -165,8 +198,28 @@ public class ExceptionHandlingBehavior<TRequest, TResponse>
 ### Cache Behavior
 
 ``` csharp
+using MutfakMessageHub.Abstractions;
+using MutfakMessageHub.Attributes;
+
 [Cache(DurationSeconds = 60)]
 public class GetProductsQuery : IRequest<List<Product>> { }
+```
+
+### Validation Behavior
+
+``` csharp
+using System.ComponentModel.DataAnnotations;
+using MutfakMessageHub.Abstractions;
+
+public class CreateUserCommand : IRequest<UserDto>
+{
+    [Required]
+    [StringLength(100)]
+    public string Name { get; set; }
+    
+    [EmailAddress]
+    public string Email { get; set; }
+}
 ```
 
 ## Outbox Pattern
@@ -175,15 +228,26 @@ Dağıtık sistemlerde kayıpsız event yayını sağlar.
 
 ## Telemetry
 
-OpenTelemetry ile Activity ve metrik üretir.
+OpenTelemetry ile Activity ve metrik üretir. TelemetryBehavior otomatik olarak tüm request ve notification'ları izler.
+
+``` csharp
+// OpenTelemetry setup (opsiyonel)
+services.AddOpenTelemetry()
+    .WithTracing(builder => builder
+        .AddSource("MutfakMessageHub")
+        .AddConsoleExporter());
+```
 
 ## Source Generator
 
-Compile-time handler keşfi ile yüksek performans sağlar.
+Compile-time handler keşfi ile yüksek performans sağlar. (Planned - şu anda reflection kullanılıyor)
 
 ## Timeout Behavior
 
 ``` csharp
+using MutfakMessageHub.Abstractions;
+using MutfakMessageHub.Attributes;
+
 [RequestTimeout(2000)]
 public class SlowQuery : IRequest<string> { }
 ```
@@ -191,6 +255,18 @@ public class SlowQuery : IRequest<string> { }
 ## Dead-Letter Queue
 
 Başarısız notification handler sonuçları DLQ'ya yazılır.
+
+``` csharp
+// DLQ'dan başarısız mesajları okuma
+var dlq = serviceProvider.GetRequiredService<IDeadLetterQueue>();
+var failedMessages = await dlq.GetFailedMessagesAsync();
+
+foreach (var message in failedMessages)
+{
+    // Başarısız mesajları işle
+    Console.WriteLine($"Failed: {message.NotificationType} - {message.ErrorMessage}");
+}
+```
 
 ## Performans
 

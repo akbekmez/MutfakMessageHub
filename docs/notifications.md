@@ -26,8 +26,13 @@ public class SendWelcomeEmail : INotificationHandler<UserCreated>
 
 ## Publish
 
-await hub.Publish(new UserCreated(10));
+``` csharp
+var messageHub = serviceProvider.GetRequiredService<IMessageHub>();
+await messageHub.Publish(new UserCreated(10));
+```
 
 ## Parallel Publish
 
-await hub.PublishParallel(new UserCreated(10));
+``` csharp
+await messageHub.PublishParallel(new UserCreated(10));
+```

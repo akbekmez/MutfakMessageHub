@@ -6,7 +6,7 @@ birbirinden ayrılmış bağımsız bileşenlerle sağlar. Mimari üç ana katma
 1. Message Abstractions
    - IRequest<T>, INotification
    - IRequestHandler<,>, INotificationHandler<>
-   - RequestHandlerDelegate<T>, NotificationHandlerDelegate
+   - RequestHandlerDelegate<T>
 
 2. Execution Pipeline
    - Behavior zinciri
@@ -19,5 +19,4 @@ birbirinden ayrılmış bağımsız bileşenlerle sağlar. Mimari üç ana katma
    - Outbox worker
    - Telemetry instrumentation
 
-Tüm bu yapı DI container üzerine inşa edilir ve reflection gerektiren operasyonlar
-source generator ile minimize edilir.
+Tüm bu yapı DI container üzerine inşa edilir. Handler discovery şu anda reflection ile yapılmaktadır. Source generator desteği planlanmaktadır.

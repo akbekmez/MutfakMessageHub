@@ -18,8 +18,7 @@ services.AddMutfakMessageHub(o =>
 
 ## Handler Discovery
 
-Source generator otomatik olarak tüm IRequestHandler ve
-INotificationHandler implementasyonlarını işler ve runtime performansını artırır.
+Handler discovery şu anda reflection ile yapılmaktadır. Source generator desteği planlanmaktadır ve compile-time handler keşfi ile runtime performansını artıracaktır.
 
 ## Open Generic Caching
 
