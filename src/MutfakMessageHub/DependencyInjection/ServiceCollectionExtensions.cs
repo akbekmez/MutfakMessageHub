@@ -60,6 +60,11 @@ public static class ServiceCollectionExtensions
             services.TryAddTransient(typeof(IPipelineBehavior<,>), typeof(RetryBehavior<,>));
         }
 
+        if (options.TelemetryEnabled)
+        {
+            services.TryAddTransient(typeof(IPipelineBehavior<,>), typeof(TelemetryBehavior<,>));
+        }
+
         // Always register exception handling and validation behaviors
         services.TryAddTransient(typeof(IPipelineBehavior<,>), typeof(ExceptionHandlingBehavior<,>));
         services.TryAddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
