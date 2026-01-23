@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://mutfakyazlimevi.com/.../logo.png" width="180" />
+  <img src="https://mutfakyazilimevi.com/logo.png" width="180" />
 </p>
 
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/mutfakyazlimevi/MutfakMessageHub/blob/main/LICENSE)
